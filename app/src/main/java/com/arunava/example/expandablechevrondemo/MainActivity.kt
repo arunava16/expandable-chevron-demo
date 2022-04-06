@@ -1,6 +1,7 @@
 package com.arunava.example.expandablechevrondemo
 
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.transition.AutoTransition
@@ -18,28 +19,47 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.arrow.setOnClickListener {
-            when (openedPanel) {
-                Panels.TOP -> {
-                    openedPanel = Panels.BOTTOM
-                    TransitionManager.beginDelayedTransition(binding.topPanel, autoTransition)
-                    binding.contentFrame.isVisible = false
-                    binding.collapsedGroup.isVisible = true
-                    rotateArrowBy(180f)
+        binding.topPanelArrow.setOnClickListener {
+            onArrowClick()
+        }
+        binding.bottomPanelArrow.setOnClickListener {
+            onArrowClick()
+        }
+    }
+
+    private fun onArrowClick() {
+        when (openedPanel) {
+            Panels.TOP -> {
+                openedPanel = Panels.BOTTOM
+                TransitionManager.beginDelayedTransition(binding.topPanel, autoTransition)
+                TransitionManager.beginDelayedTransition(binding.bottomPanel, autoTransition)
+                binding.apply {
+                    topPanelFixed.isVisible = true
+                    topPanelExpandable.isVisible = false
+                    bottomPanelFixed.isVisible = false
+                    bottomPanelExpandable.isVisible = true
                 }
-                Panels.BOTTOM -> {
-                    openedPanel = Panels.TOP
-                    TransitionManager.beginDelayedTransition(binding.topPanel, autoTransition)
-                    binding.contentFrame.isVisible = true
-                    binding.collapsedGroup.isVisible = false
-                    rotateArrowBy(-180f)
+                rotateArrowBy(binding.topPanelArrow, 180f)
+                rotateArrowBy(binding.bottomPanelArrow, -180f)
+            }
+            Panels.BOTTOM -> {
+                openedPanel = Panels.TOP
+                TransitionManager.beginDelayedTransition(binding.topPanel, autoTransition)
+                TransitionManager.beginDelayedTransition(binding.bottomPanel, autoTransition)
+                binding.apply {
+                    topPanelFixed.isVisible = false
+                    topPanelExpandable.isVisible = true
+                    bottomPanelFixed.isVisible = true
+                    bottomPanelExpandable.isVisible = false
                 }
+                rotateArrowBy(binding.topPanelArrow, -180f)
+                rotateArrowBy(binding.bottomPanelArrow, 180f)
             }
         }
     }
 
-    private fun rotateArrowBy(value: Float) {
-        binding.arrow.animate()
+    private fun rotateArrowBy(arrow: ImageView, value: Float) {
+        arrow.animate()
             .rotationBy(value)
             .setDuration(ANIM_DURATION)
             .start()
